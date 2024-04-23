@@ -1,18 +1,21 @@
+import os
 from prometheus_client import Gauge, Histogram, CollectorRegistry, generate_latest
 
 class Metrics:
     def __init__(self):
         self.registry = CollectorRegistry()
 
+        metrics_prefix = os.getenv('METRICS_PREFIX', 'platform_api_tester_')
+
         self.request_status = Gauge(
-            'request_status',
+            f'{metrics_prefix}request_status',
             'Request status',
             ['network', 'environment', 'method', 'status'],
             registry=self.registry
         )
 
         self.request_duration = Histogram(
-            'request_duration_seconds',
+            f'{metrics_prefix}request_duration',
             'Request duration in seconds',
             ['network', 'environment', 'method'],
             buckets=[0.1, 0.5, 1.0, 2.0, 5.0, 10.0, float('inf')],
