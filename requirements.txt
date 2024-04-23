@@ -1,0 +1,16 @@
+aiohttp
+aiosignal
+async-timeout
+asyncio
+attrs
+certifi
+charset-normalizer
+frozenlist
+idna
+multidict
+prometheus_client
+python-dotenv
+PyYAML
+requests
+urllib3
+yarl

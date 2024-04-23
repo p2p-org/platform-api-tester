@@ -1,0 +1,27 @@
+debug: False
+test_interval: 60 # seconds
+
+environments:
+  testnet: https://api-test.p2p.org/api/v1
+  mainnet: https://api.p2p.org/api/v1
+
+networks:
+  cosmos:
+    testnet:
+      stake:
+        stashAccountAddress: cosmos1z06wznmcmv5mvyf74e3gm6ufcrgcxquw6drnxn
+        amount: 1
+      unstake:
+        stashAccountAddress: cosmos17lgg03ze9x6xka02fs0hhw4ad4wwg05hu5hlg5
+        amount: 1
+      broadcast:
+        signedTransaction: eyJ0eXBlIjogImNvc21vcy1zZGsvTXNnU2VuZCIsICJ2YWx1ZSI6IHsiZnJvbV9hZGRyZXNzIjogImNvc21vczF6MDZ3em5tY212NW12eWY3NGUzZ202dWZjcmdjeHF1dzZkcm54biIsICJ0b19hZGRyZXNzIjogImNvc21vczE3bGdnMDN6ZTl4NnhrYTAyZnMwaGh3NGFkNHd3ZzA1aHU1aGxnNSIsICJhbW91bnQiOiBbeyJkZW5vbSI6ICJhdG9tIiwgImFtb3VudCI6ICIxIn1dfX0=
+  polkadot:
+    testnet:
+      stake:
+        stashAccountAddress: 5H6ryBWChC5w7eaQ4GZjo329sEnhvjetSr6MBEt42mZ5tPw5
+        rewardDestinationType: staked
+        rewardDestination: 5H6ryBWChC5w7eaQ4GZjo329sEnhvjetSr6MBEt42mZ5tPw5
+        amount: 3
+      broadcast:
+        signedTransaction: some-bytes-must-be-here
