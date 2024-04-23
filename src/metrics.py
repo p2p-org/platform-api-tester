@@ -22,17 +22,25 @@ class Metrics:
             registry=self.registry
         )
 
+        self.http_response_codes = Gauge(
+            f'{metrics_prefix}http_response_codes',
+            'HTTP response codes',
+            ['network', 'environment', 'method', 'code'],
+            registry=self.registry
+        )
+
     def update_metrics(self, result):
         network = result['network']
         environment = result['environment']
         method = result['method']
         status = result['result']
         duration = result['execution_duration']
+        http_code = str(result['http_response_code'])
 
         self.request_status.labels(network=network, environment=environment, method=method, status=status).set(
             1 if status == 'ok' else 0)
         self.request_duration.labels(network=network, environment=environment, method=method).observe(duration)
-
+        self.http_response_codes.labels(network=network, environment=environment, method=method, code=http_code).inc()
 
     def generate_metrics(self):
         return generate_latest(self.registry)

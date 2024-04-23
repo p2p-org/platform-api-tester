@@ -50,7 +50,6 @@ async def run_tests(config, metrics):
             results.clear()
 
             await asyncio.sleep(config['test_interval'])
-            retry_count = 0
 
         except Exception as e:
             logging.error(f'Error occurred during testing: {str(e)}')
