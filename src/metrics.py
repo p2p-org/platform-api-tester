@@ -1,6 +1,5 @@
 from prometheus_client import Gauge, Histogram, CollectorRegistry, generate_latest
 
-
 class Metrics:
     def __init__(self):
         self.registry = CollectorRegistry()
@@ -30,6 +29,7 @@ class Metrics:
         self.request_status.labels(network=network, environment=environment, method=method, status=status).set(
             1 if status == 'ok' else 0)
         self.request_duration.labels(network=network, environment=environment, method=method).observe(duration)
+
 
     def generate_metrics(self):
         return generate_latest(self.registry)

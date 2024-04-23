@@ -4,10 +4,10 @@ import yaml
 import os
 import logging
 from dotenv import load_dotenv
-from src.cosmos import Cosmos
-from src.polkadot import Polkadot
-from src.server import create_app
-from src.metrics import Metrics
+from cosmos import Cosmos
+from polkadot import Polkadot
+from server import create_app
+from metrics import Metrics
 from aiohttp import web
 
 load_dotenv()
@@ -75,7 +75,7 @@ async def main():
     runner = web.AppRunner(app)
     await runner.setup()
 
-    site = web.TCPSite(runner, 'localhost', 8080)
+    site = web.TCPSite(runner, '0.0.0.0', 8080)
     await site.start()
 
     try:

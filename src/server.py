@@ -1,5 +1,5 @@
 from aiohttp import web
-from src.metrics import Metrics
+from metrics import Metrics
 
 async def metrics_handler(request):
     metrics = request.app['metrics']

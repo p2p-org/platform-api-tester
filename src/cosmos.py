@@ -1,4 +1,4 @@
-from src.base_network import BaseNetwork
+from base_network import BaseNetwork
 
 class Cosmos(BaseNetwork):
     def __init__(self, api_key, base_url, network_name, environment):
