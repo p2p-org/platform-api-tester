@@ -23,7 +23,7 @@ async def run_tests(config, metrics):
                 for network_name, network_config in config['networks'].items():
                     for blockchain_env, methods in network_config.items():
                         api_key = os.getenv(f'{environment_name.upper()}_API_KEY')
-                        logging.info(f'Testing network: {network_name}/{blockchain_env}, api environment: {environment_name}')
+                        logging.info(f'Testing {environment_name}/{network_name}/{blockchain_env}')
 
                         if network_name == 'cosmos':
                             network = Cosmos(api_key, environment_url, network_name, blockchain_env, environment_name)
