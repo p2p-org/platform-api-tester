@@ -6,6 +6,7 @@ import logging
 from dotenv import load_dotenv
 from cosmos import Cosmos
 from polkadot import Polkadot
+from solana import Solana
 from server import create_app
 from metrics import Metrics
 from aiohttp import web
@@ -18,30 +19,32 @@ async def run_tests(config, metrics):
 
     while True:
         try:
-            for network_name, network_config in config['networks'].items():
-                for environment, methods in network_config.items():
-                    base_url = config['environments'][environment]
-                    api_key = os.getenv(f'{environment.upper()}_API_KEY')
-                    logging.info(f'Testing network: {network_name}, environment: {environment}')
+            for environment_name, environment_url in config['environments'].items():
+                for network_name, network_config in config['networks'].items():
+                    for blockchain_env, methods in network_config.items():
+                        api_key = os.getenv(f'{environment_name.upper()}_API_KEY')
+                        logging.info(f'Testing network: {network_name}/{blockchain_env}, api environment: {environment_name}')
 
-                    if network_name == 'cosmos':
-                        network = Cosmos(api_key, base_url, network_name, environment)
-                    elif network_name == 'polkadot':
-                        network = Polkadot(api_key, base_url, network_name, environment)
-                    else:
-                        continue
-
-                    for method, params in methods.items():
-                        if method == 'stake':
-                            result = await network.stake(params)
-                        elif method == 'unstake':
-                            result = await network.unstake(params)
-                        elif method == 'broadcast':
-                            result = await network.broadcast(params['signedTransaction'])
+                        if network_name == 'cosmos':
+                            network = Cosmos(api_key, environment_url, network_name, blockchain_env, environment_name)
+                        elif network_name == 'polkadot':
+                            network = Polkadot(api_key, environment_url, network_name, blockchain_env, environment_name)
+                        elif network_name == 'solana':
+                            network = Solana(api_key, environment_url, network_name, blockchain_env, environment_name)
                         else:
                             continue
 
-                        results.append(result)
+                        for method, params in methods.items():
+                            if method == 'stake':
+                                result = await network.stake(params)
+                            elif method == 'unstake':
+                                result = await network.unstake(params)
+                            elif method == 'broadcast':
+                                result = await network.broadcast(params['signedTransaction'])
+                            else:
+                                continue
+
+                            results.append(result)
 
             for result in results:
                 logging.debug(json.dumps(result, indent=2))

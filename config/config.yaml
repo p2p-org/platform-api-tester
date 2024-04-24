@@ -2,8 +2,8 @@ debug: False
 test_interval: 60 # seconds
 
 environments:
-  testnet: https://api-test.p2p.org/api/v1
-  mainnet: https://api.p2p.org/api/v1
+  dev: https://api-test.p2p.org/api/v1
+  prod: https://api.p2p.org/api/v1
 
 networks:
   cosmos:
@@ -16,6 +16,10 @@ networks:
         amount: 1
       broadcast:
         signedTransaction: eyJ0eXBlIjogImNvc21vcy1zZGsvTXNnU2VuZCIsICJ2YWx1ZSI6IHsiZnJvbV9hZGRyZXNzIjogImNvc21vczF6MDZ3em5tY212NW12eWY3NGUzZ202dWZjcmdjeHF1dzZkcm54biIsICJ0b19hZGRyZXNzIjogImNvc21vczE3bGdnMDN6ZTl4NnhrYTAyZnMwaGh3NGFkNHd3ZzA1aHU1aGxnNSIsICJhbW91bnQiOiBbeyJkZW5vbSI6ICJhdG9tIiwgImFtb3VudCI6ICIxIn1dfX0=
+    mainnet:
+      stake:
+        stashAccountAddress: cosmos1z06wznmcmv5mvyf74e3gm6ufcrgcxquw6drnxn
+        amount: 1
   polkadot:
     testnet:
       stake:
@@ -25,3 +29,18 @@ networks:
         amount: 3
       broadcast:
         signedTransaction: some-bytes-must-be-here
+  solana:
+    testnet:
+      stake:
+        feePayer: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
+        fromPublicKey: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
+        stakeAuthority: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
+        withdrawAuthority: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
+        amount: 1002282880
+    mainnet:
+      stake:
+        feePayer: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
+        fromPublicKey: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
+        stakeAuthority: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
+        withdrawAuthority: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
+        amount: 1002282880

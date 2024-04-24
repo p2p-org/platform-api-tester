@@ -1,9 +1,9 @@
 from base_network import BaseNetwork
 
 class Polkadot(BaseNetwork):
-    def __init__(self, api_key, base_url, network_name, environment):
-        base_url = f"{base_url}/polkadot/westend" if environment == "testnet" else f"{base_url}/polkadot/mainnet"
-        super().__init__(api_key, base_url, network_name, environment)
+    def __init__(self, api_key, base_url, network_name, blockchain_env, api_env):
+        base_url = f"{base_url}/polkadot/{'westend' if blockchain_env == 'testnet' else 'mainnet'}"
+        super().__init__(api_key, base_url, network_name, blockchain_env, api_env)
 
     async def stake(self, params):
         url = f'{self.base_url}/staking/bond'

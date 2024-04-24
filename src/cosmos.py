@@ -1,9 +1,10 @@
 from base_network import BaseNetwork
 
+
 class Cosmos(BaseNetwork):
-    def __init__(self, api_key, base_url, network_name, environment):
-        base_url = f"{base_url}/cosmos/theta-testnet-001" if environment == "testnet" else f"{base_url}/cosmos/cosmoshub-4"
-        super().__init__(api_key, base_url, network_name, environment)
+    def __init__(self, api_key, base_url, network_name, blockchain_env, api_env):
+        base_url = f"{base_url}/cosmos/{'theta-testnet-001' if blockchain_env == 'testnet' else 'cosmoshub-4'}"
+        super().__init__(api_key, base_url, network_name, blockchain_env, api_env)
 
     async def stake(self, params):
         url = f'{self.base_url}/staking/stake'

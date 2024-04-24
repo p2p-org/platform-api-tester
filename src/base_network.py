@@ -4,11 +4,12 @@ import time
 import json
 
 class BaseNetwork:
-    def __init__(self, api_key, base_url, network_name, environment):
+    def __init__(self, api_key, base_url, network_name, blockchain_env, api_env):
         self.api_key = api_key
         self.base_url = base_url
         self.network_name = network_name
-        self.environment = environment
+        self.blockchain_env = blockchain_env
+        self.api_env = api_env
         self.headers = {'Authorization': f'Bearer {self.api_key}'}
 
     async def make_request(self, url, method, payload=None):
@@ -31,7 +32,8 @@ class BaseNetwork:
 
                     return {
                         'network': self.network_name,
-                        'environment': self.environment,
+                        'blockchain_env': self.blockchain_env,
+                        'api_env': self.api_env,
                         'url': url,
                         'execution_timestamp': start_time,
                         'execution_duration': execution_time,
@@ -46,7 +48,8 @@ class BaseNetwork:
         if response is None:
             return {
                 'network': self.network_name,
-                'environment': self.environment,
+                'blockchain_env': self.blockchain_env,
+                'api_env': self.api_env,
                 'url': None,
                 'method': method_name,
                 'execution_timestamp': None,
@@ -58,7 +61,8 @@ class BaseNetwork:
 
         result = {
             'network': response['network'],
-            'environment': response['environment'],
+            'blockchain_env': response['blockchain_env'],
+            'api_env': response['api_env'],
             'url': response['url'],
             'method': method_name,
             'execution_timestamp': response['execution_timestamp'],
@@ -76,17 +80,6 @@ class BaseNetwork:
             else:
                 result['result'] = 'ok'
                 result['comment'] = 'Success'
-
-                """
-                if 'result' in json_response:
-                    result_data = json_response['result']
-                    if method_name == 'stake' or method_name == 'bond':
-                        result['comment'] = f"Staked/Bonded {result_data.get('amount', '')} {result_data.get('currency', '')}"
-                    elif method_name == 'unstake':
-                        result['comment'] = f"Unstaked {result_data.get('amount', '')} {result_data.get('currency', '')}"
-                    elif method_name == 'broadcast':
-                        result['comment'] = f"Transaction hash: {result_data.get('transactionData', {}).get('messageHash', '')}"
-                """
 
         except json.JSONDecodeError:
             result['result'] = 'fail'
