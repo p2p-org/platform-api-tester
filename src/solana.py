@@ -1,12 +1,7 @@
-from base_network import BaseNetwork
+from base_api import BaseAPI
 
-class Solana(BaseNetwork):
-    def __init__(self, api_key, base_url, network_name, blockchain_env, api_env):
-        base_url = f"{base_url}/solana/{'testnet' if blockchain_env == 'testnet' else 'mainnet-beta'}"
-        super().__init__(api_key, base_url, network_name, blockchain_env, api_env)
-
+class SolanaAPI(BaseAPI):
     async def stake(self, params):
-        url = f'{self.base_url}/staking/stake'
         payload = {
             'feePayer': params['feePayer'],
             'fromPublicKey': params['fromPublicKey'],
@@ -14,5 +9,4 @@ class Solana(BaseNetwork):
             'withdrawAuthority': params.get('withdrawAuthority', params['fromPublicKey']),
             'amount': params['amount']
         }
-        response = await self.make_request(url, 'POST', payload)
-        return self.parse_response(response, 'stake')
+        return await self.call_method('stake', payload)

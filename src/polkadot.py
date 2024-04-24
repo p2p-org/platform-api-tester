@@ -1,25 +1,17 @@
-from base_network import BaseNetwork
+from base_api import BaseAPI
 
-class Polkadot(BaseNetwork):
-    def __init__(self, api_key, base_url, network_name, blockchain_env, api_env):
-        base_url = f"{base_url}/polkadot/{'westend' if blockchain_env == 'testnet' else 'mainnet'}"
-        super().__init__(api_key, base_url, network_name, blockchain_env, api_env)
-
+class PolkadotAPI(BaseAPI):
     async def stake(self, params):
-        url = f'{self.base_url}/staking/bond'
         payload = {
             'stashAccountAddress': params['stashAccountAddress'],
             'rewardDestinationType': params['rewardDestinationType'],
             'rewardDestination': params['rewardDestination'],
             'amount': params['amount']
         }
-        response = await self.make_request(url, 'POST', payload)
-        return self.parse_response(response, 'stake')
+        return await self.call_method('stake', payload)
 
     async def broadcast(self, signed_transaction):
-        url = f'{self.base_url}/tx/send'
         payload = {
             'signedTransaction': signed_transaction
         }
-        response = await self.make_request(url, 'POST', payload)
-        return self.parse_response(response, 'broadcast')
+        return await self.call_method('broadcast', payload)

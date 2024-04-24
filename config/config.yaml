@@ -1,46 +1,97 @@
-debug: False
-test_interval: 60 # seconds
+debug: false
+request_timeout: 60
+test_interval: 60
 
 environments:
   dev: https://api-test.p2p.org/api/v1
   prod: https://api.p2p.org/api/v1
 
-networks:
-  cosmos:
-    testnet:
-      stake:
-        stashAccountAddress: cosmos1z06wznmcmv5mvyf74e3gm6ufcrgcxquw6drnxn
-        amount: 1
-      unstake:
-        stashAccountAddress: cosmos17lgg03ze9x6xka02fs0hhw4ad4wwg05hu5hlg5
-        amount: 1
-      broadcast:
-        signedTransaction: eyJ0eXBlIjogImNvc21vcy1zZGsvTXNnU2VuZCIsICJ2YWx1ZSI6IHsiZnJvbV9hZGRyZXNzIjogImNvc21vczF6MDZ3em5tY212NW12eWY3NGUzZ202dWZjcmdjeHF1dzZkcm54biIsICJ0b19hZGRyZXNzIjogImNvc21vczE3bGdnMDN6ZTl4NnhrYTAyZnMwaGh3NGFkNHd3ZzA1aHU1aGxnNSIsICJhbW91bnQiOiBbeyJkZW5vbSI6ICJhdG9tIiwgImFtb3VudCI6ICIxIn1dfX0=
-    mainnet:
-      stake:
-        stashAccountAddress: cosmos1z06wznmcmv5mvyf74e3gm6ufcrgcxquw6drnxn
-        amount: 1
-  polkadot:
-    testnet:
-      stake:
-        stashAccountAddress: 5H6ryBWChC5w7eaQ4GZjo329sEnhvjetSr6MBEt42mZ5tPw5
-        rewardDestinationType: staked
-        rewardDestination: 5H6ryBWChC5w7eaQ4GZjo329sEnhvjetSr6MBEt42mZ5tPw5
-        amount: 3
-      broadcast:
-        signedTransaction: some-bytes-must-be-here
-  solana:
-    testnet:
-      stake:
-        feePayer: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
-        fromPublicKey: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
-        stakeAuthority: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
-        withdrawAuthority: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
-        amount: 1002282880
-    mainnet:
-      stake:
-        feePayer: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
-        fromPublicKey: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
-        stakeAuthority: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
-        withdrawAuthority: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
-        amount: 1002282880
+services:
+  cosmos_api:
+    path: /cosmos
+    zones:
+      testnet:
+        path: /theta-testnet-001
+        methods:
+          stake:
+            path: /staking/stake
+            params:
+              stashAccountAddress: cosmos1z06wznmcmv5mvyf74e3gm6ufcrgcxquw6drnxn
+              amount: 1
+          unstake:
+            path: /staking/unstake
+            params:
+              stashAccountAddress: cosmos17lgg03ze9x6xka02fs0hhw4ad4wwg05hu5hlg5
+              amount: 1
+          broadcast:
+            path: /transaction/send
+            params:
+              signedTransaction: eyJ0eXBlIjogImNvc21vcy1zZGsvTXNnU2VuZCIsICJ2YWx1ZSI6IHsiZnJvbV9hZGRyZXNzIjogImNvc21vczF6MDZ3em5tY212NW12eWY3NGUzZ202dWZjcmdjeHF1dzZkcm54biIsICJ0b19hZGRyZXNzIjogImNvc21vczE3bGdnMDN6ZTl4NnhrYTAyZnMwaGh3NGFkNHd3ZzA1aHU1aGxnNSIsICJhbW91bnQiOiBbeyJkZW5vbSI6ICJhdG9tIiwgImFtb3VudCI6ICIxIn1dfX0=
+      mainnet:
+        path: /cosmoshub-4
+        methods:
+          stake:
+            path: /staking/stake
+            params:
+              stashAccountAddress: cosmos1z06wznmcmv5mvyf74e3gm6ufcrgcxquw6drnxn
+              amount: 1
+  polkadot_api:
+    path: /polkadot
+    zones:
+      testnet:
+        path: /westend
+        methods:
+          stake:
+            path: /staking/bond
+            params:
+              stashAccountAddress: 5H6ryBWChC5w7eaQ4GZjo329sEnhvjetSr6MBEt42mZ5tPw5
+              rewardDestinationType: staked
+              rewardDestination: 5H6ryBWChC5w7eaQ4GZjo329sEnhvjetSr6MBEt42mZ5tPw5
+              amount: 3
+          broadcast:
+            path: /tx/send
+            params:
+              signedTransaction: some-bytes-must-be-here
+  solana_api:
+    path: /solana
+    zones:
+      testnet:
+        methods:
+          stake:
+            path: /staking/stake
+            params:
+              feePayer: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
+              fromPublicKey: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
+              stakeAuthority: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
+              withdrawAuthority: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
+              amount: 1002282880
+      mainnet:
+        path: /mainnet-beta
+        methods:
+          stake:
+            path: /staking/stake
+            params:
+              feePayer: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
+              fromPublicKey: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
+              stakeAuthority: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
+              withdrawAuthority: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
+              amount: 1002282880
+
+  data_service:
+    path: /data-service
+    zones:
+      staging:
+        path: /staging
+        methods:
+          get_data:
+            path: /data
+            params:
+              start_date: '2023-01-01'
+              end_date: '2023-12-31'
+      production:
+        methods:
+          get_data:
+            path: /data
+            params:
+              start_date: '2023-01-01'
+              end_date: '2023-12-31'

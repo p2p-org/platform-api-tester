@@ -4,9 +4,9 @@ import yaml
 import os
 import logging
 from dotenv import load_dotenv
-from cosmos import Cosmos
-from polkadot import Polkadot
-from solana import Solana
+from cosmos import CosmosAPI
+from polkadot import PolkadotAPI
+from solana import SolanaAPI
 from server import create_app
 from metrics import Metrics
 from aiohttp import web
@@ -20,31 +20,31 @@ async def run_tests(config, metrics):
     while True:
         try:
             for environment_name, environment_url in config['environments'].items():
-                for network_name, network_config in config['networks'].items():
-                    for blockchain_env, methods in network_config.items():
-                        api_key = os.getenv(f'{environment_name.upper()}_API_KEY')
-                        logging.info(f'Testing {environment_name}/{network_name}/{blockchain_env}')
+                api_key = os.getenv(f'{environment_name.upper()}_API_KEY')
+                for service_name, service_config in config['services'].items():
+                    for zone_name, zone_config in service_config.get('zones', {}).items():
+                        logging.info(f'Testing {environment_name}/{service_name}/{zone_name}')
 
-                        if network_name == 'cosmos':
-                            network = Cosmos(api_key, environment_url, network_name, blockchain_env, environment_name)
-                        elif network_name == 'polkadot':
-                            network = Polkadot(api_key, environment_url, network_name, blockchain_env, environment_name)
-                        elif network_name == 'solana':
-                            network = Solana(api_key, environment_url, network_name, blockchain_env, environment_name)
+                        url = f"{environment_url}{service_config['path']}{zone_config.get('path', '')}"
+                        if service_name == 'cosmos_api':
+                            api = CosmosAPI(url, api_key, config['request_timeout'])
+                        elif service_name == 'polkadot_api':
+                            api = PolkadotAPI(url, api_key, config['request_timeout'])
+                        elif service_name == 'solana_api':
+                            api = SolanaAPI(url, api_key, config['request_timeout'])
                         else:
+                            logging.warning(f'Unknown service: {service_name}. Skipping.')
                             continue
 
-                        for method, params in methods.items():
-                            if method == 'stake':
-                                result = await network.stake(params)
-                            elif method == 'unstake':
-                                result = await network.unstake(params)
-                            elif method == 'broadcast':
-                                result = await network.broadcast(params['signedTransaction'])
-                            else:
-                                continue
-
+                        for method_name, method_config in zone_config.get('methods', {}).items():
+                            result = await api.call_method(method_name, method_config)
+                            result['environment'] = environment_name
+                            result['service'] = service_name
+                            result['zone'] = zone_name
+                            result['method'] = method_name
                             results.append(result)
+
+                        await api.close()
 
             for result in results:
                 logging.debug(json.dumps(result, indent=2))
@@ -71,7 +71,8 @@ async def main():
     setup_logging(config.get('debug', False))
 
     app = await create_app()
-    metrics = app['metrics']
+    metrics = Metrics()
+    app['metrics'] = metrics
 
     asyncio.create_task(run_tests(config, metrics))
     runner = web.AppRunner(app)
