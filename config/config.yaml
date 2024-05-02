@@ -1,6 +1,6 @@
 debug: false
-request_timeout: 60
-test_interval: 60
+request_timeout: 60 #seconds
+test_interval: 60 #seconds
 
 environments:
   dev: https://api-test.p2p.org/api/v1
@@ -76,22 +76,3 @@ services:
               stakeAuthority: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
               withdrawAuthority: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
               amount: 1002282880
-
-  data_service:
-    path: /data-service
-    zones:
-      staging:
-        path: /staging
-        methods:
-          get_data:
-            path: /data
-            params:
-              start_date: '2023-01-01'
-              end_date: '2023-12-31'
-      production:
-        methods:
-          get_data:
-            path: /data
-            params:
-              start_date: '2023-01-01'
-              end_date: '2023-12-31'
