@@ -1,0 +1,76 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches:
+    - main
+    tags:
+    - "v*"
+
+jobs:
+  build-images:
+    runs-on: ubuntu-latest
+    outputs:
+      author-name: ${{ steps.author-name.outputs.author-name }}
+      author-email: ${{ steps.author-email.outputs.author-email }}
+      tag: ${{ steps.tag.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4.1.4
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5.5.1
+        with:
+          images: europe-west4-docker.pkg.dev/webdev-cube/p2pwebsite/platform-api-tester
+          tags: |
+            type=ref,event=tag
+            type=sha,event=branch,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+          flavor: |
+            latest=false
+
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          token_format: 'access_token'
+          credentials_json: '${{ secrets.GOOGLE_ARTIFACTREGISTRY_CREDENTIALS }}'
+      - name: Configure GC docker
+        run: |
+          gcloud auth configure-docker europe-west4-docker.pkg.dev
+
+      - name: Build and push
+        uses: docker/build-push-action@v5.3.0
+        with:
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - id: author-name
+        run: echo "author-name=$(git log -1 --pretty=format:'%an')" >> $GITHUB_OUTPUT
+      - id: author-email
+        run: echo "author-email=$(git log -1 --pretty=format:'%ae')" >> $GITHUB_OUTPUT
+      - id: tag
+        run: echo "tag=$DOCKER_METADATA_OUTPUT_VERSION" >> $GITHUB_OUTPUT
+
+  update-refs:
+    runs-on: ubuntu-latest
+    needs: build-images
+    steps:
+      - uses: actions/checkout@v4.1.4
+        with:
+          repository: p2p-org/p2pwebsite-k8s-specs
+          ssh-key: ${{ secrets.K8S_SPECS_KEY }}
+      - name: update image tag
+        env:
+          TAG: ${{ needs.build-images.outputs.tag }}
+        run: |
+          yq eval ".image.tag = \"$TAG\"" -i charts/p2pwebsite-platform-api-tester/values.prod.yaml;
+      - name: push changes
+        env:
+          AUTHOR_NAME: ${{ needs.build-images.outputs.author-name }}
+          AUTHOR_EMAIL: ${{ needs.build-images.outputs.author-email }}
+          TAG: ${{ needs.build-images.outputs.tag }}
+        run: |
+          git config user.name $AUTHOR_NAME
+          git config user.email $AUTHOR_EMAIL
+          git commit -am "Update platform-api-tester stands to $TAG" && true
+          git push
