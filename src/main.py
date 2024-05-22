@@ -6,7 +6,9 @@ import logging
 from dotenv import load_dotenv
 from cosmos import CosmosAPI
 from polkadot import PolkadotAPI
+from polygon import PolygonAPI
 from solana import SolanaAPI
+from celestia import CelestiaAPI
 from server import create_app
 from metrics import Metrics
 from aiohttp import web
@@ -33,6 +35,10 @@ async def run_tests(config, metrics):
                             api = PolkadotAPI(url, api_key, config['request_timeout'])
                         elif service_name == 'solana_api':
                             api = SolanaAPI(url, api_key, config['request_timeout'])
+                        elif service_name == 'celestia_api':
+                            api = CelestiaAPI(url, api_key, config['request_timeout'])
+                        elif service_name == 'polygon_api':
+                            api = PolygonAPI(url, api_key, config['request_timeout'])
                         else:
                             logging.warning(f'Unknown service: {service_name}. Skipping.')
                             continue
