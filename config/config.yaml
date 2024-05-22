@@ -35,6 +35,13 @@ services:
             params:
               stashAccountAddress: cosmos1z06wznmcmv5mvyf74e3gm6ufcrgcxquw6drnxn
               amount: 1
+          unstake:
+            path: /staking/unstake
+            params:
+              stashAccountAddress: cosmos1z06wznmcmv5mvyf74e3gm6ufcrgcxquw6drnxn
+          broadcast:
+            path: /transaction/send
+            signedTransaction: zzzzzz
   polkadot_api:
     path: /polkadot
     zones:
