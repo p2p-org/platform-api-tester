@@ -3,15 +3,15 @@ request_timeout: 60 #seconds
 test_interval: 60 #seconds
 
 environments:
-  dev: https://api-test.p2p.org/api/v1
+  #dev: https://api-test.p2p.org/api/v1
   prod: https://api.p2p.org/api/v1
 
 services:
   cosmos_api:
     path: /cosmos
     zones:
-      testnet:
-        path: /theta-testnet-001
+      mainnet:
+        path: /cosmoshub-4
         methods:
           stake:
             path: /staking/stake
@@ -21,58 +21,31 @@ services:
           unstake:
             path: /staking/unstake
             params:
-              stashAccountAddress: cosmos17lgg03ze9x6xka02fs0hhw4ad4wwg05hu5hlg5
+              stashAccountAddress: cosmos1z06wznmcmv5mvyf74e3gm6ufcrgcxquw6drnxn
               amount: 1
           broadcast:
             path: /transaction/send
             params:
-              signedTransaction: eyJ0eXBlIjogImNvc21vcy1zZGsvTXNnU2VuZCIsICJ2YWx1ZSI6IHsiZnJvbV9hZGRyZXNzIjogImNvc21vczF6MDZ3em5tY212NW12eWY3NGUzZ202dWZjcmdjeHF1dzZkcm54biIsICJ0b19hZGRyZXNzIjogImNvc21vczE3bGdnMDN6ZTl4NnhrYTAyZnMwaGh3NGFkNHd3ZzA1aHU1aGxnNSIsICJhbW91bnQiOiBbeyJkZW5vbSI6ICJhdG9tIiwgImFtb3VudCI6ICIxIn1dfX0=
-      mainnet:
-        path: /cosmoshub-4
-        methods:
-          stake:
-            path: /staking/stake
-            params:
-              stashAccountAddress: cosmos1z06wznmcmv5mvyf74e3gm6ufcrgcxquw6drnxn
-              amount: 1
+              signedTransaction: 0ab2010aa0010a372f636f736d6f732e646973747269627574696f6e2e763162657461312e4d7367576974686472617744656c656761746f7252657761726412650a2d636f736d6f733163636437376a307635787230786a776b6d79707a64336d686c646b77757635707279656674651234636f736d6f7376616c6f70657231376c676730337a65397836786b61303266733068687734616434777767303568657172327938120d4f2d624871616c53746774476b12670a500a460a1f2f636f736d6f732e63727970746f2e736563703235366b312e5075624b657912230a210212173ffbdadf4a5a14c974270e9ae63ad308973278be327bbbac985fb01bc37d12040a020801183c12130a0d0a057561746f6d12043339313310c8c6091a4011d336ca70020070d135a24fcfdfdbd8ac05306c6df5e88ff9d1915ce858662b164c9cfcc2683dea1840552834bf3e86a2f75babd2f66a2ef3f1bbc5247288d0
   polkadot_api:
     path: /polkadot
     zones:
-      testnet:
-        path: /westend
+      mainnet:
+        path: /mainnet
         methods:
-          stake:
+          bond:
             path: /staking/bond
             params:
-              stashAccountAddress: 5H6ryBWChC5w7eaQ4GZjo329sEnhvjetSr6MBEt42mZ5tPw5
+              stashAccountAddress: 12xtAYsRUrmbniiWQqJtECiBQrMn8AypQcXhnQAc6RB6XkLW
               rewardDestinationType: staked
-              rewardDestination: 5H6ryBWChC5w7eaQ4GZjo329sEnhvjetSr6MBEt42mZ5tPw5
-              amount: 3
+              rewardDestination: 12xtAYsRUrmbniiWQqJtECiBQrMn8AypQcXhnQAc6RB6XkLW
+              amount: 600
+          unbond:
+            path: /staking/unbond
+            params:
+              stashAccountAddress: 16QzZydJqbXiqzs7wW3pNdReMcWPb6ps7yj71g8VTrhHgJFt
+              amount: 5
           broadcast:
             path: /tx/send
             params:
-              signedTransaction: some-bytes-must-be-here
-  solana_api:
-    path: /solana
-    zones:
-      testnet:
-        methods:
-          stake:
-            path: /staking/stake
-            params:
-              feePayer: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
-              fromPublicKey: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
-              stakeAuthority: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
-              withdrawAuthority: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
-              amount: 1002282880
-      mainnet:
-        path: /mainnet-beta
-        methods:
-          stake:
-            path: /staking/stake
-            params:
-              feePayer: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
-              fromPublicKey: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
-              stakeAuthority: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
-              withdrawAuthority: C83GxcNFTC2tK22rLCCrLKYRkckbNVGsjethN5iswgfC
-              amount: 1002282880
+              signedTransaction: 0x290284009043f4ef3d4dfe5f04f9ae21adca3dc2519aeb4411f7af3cb6e1007a1a61924401be8bfd5c9865439492ad85a68ef96e9aa2867aeda280e2f798a4daebe46343542902c06a5fa0d06593f5cb3522a13c466597b756fe6cd06c0d740b31d5570d8c000000050300

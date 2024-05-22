@@ -10,7 +10,8 @@ class BaseAPI:
         self.connector = aiohttp.TCPConnector(verify_ssl=False)
         self.session = aiohttp.ClientSession(headers={'Authorization': f'Bearer {self.api_key}'}, connector=self.connector)
 
-    async def call_method(self, method_name, method_config):
+
+    async def call_method(self, method_config):
         url = f"{self.base_url}{method_config['path']}"
         params = method_config.get('params', {})
 
@@ -35,17 +36,19 @@ class BaseAPI:
                     logging.error(f'Error parsing JSON response: {str(e)}, response text: {response_text}')
                     result = {'error': str(e), 'response_text': response_text}
 
-                return {
+                result.update({
                     'url': str(response.url),
-                    'status_code': http_response_code,
+                    'http_response_code': http_response_code,
                     'execution_duration': execution_time,
-                    'response': result
-                }
+                    'service_status': 1 if http_response_code in [200, 201] else 0,
+                })
+
+                return result
         except Exception as e:
-            logging.error(f'Error calling method {method_name}: {str(e)}')
+            logging.error(f'Error calling API: {str(e)}')
             return {
                 'url': url,
-                'status_code': 555,
+                'http_response_code': 555,
                 'execution_duration': time.time() - start_time,
                 'response': {'error': str(e)}
             }
