@@ -1,22 +1,26 @@
 from base_api import BaseAPI
 
 class CosmosAPI(BaseAPI):
-    async def stake(self, params):
-        payload = {
-            'stashAccountAddress': params['stashAccountAddress'],
-            'amount': params['amount']
-        }
-        return await self.call_method('stake', payload)
+    async def stake(self, method_config):
+        result = await self.call_method(method_config)
+        service_status = 0
 
-    async def unstake(self, params):
-        payload = {
-            'stashAccountAddress': params['stashAccountAddress'],
-            'amount': params['amount']
-        }
-        return await self.call_method('unstake', payload)
+        if result['http_response_code'] in [200, 201] and result.get('error') is None:
+            response = result.get('result', {})
+            if (
+                isinstance(response.get('amount'), (int, float)) and response['amount'] > 0 and
+                isinstance(response.get('validatorAddress'), str) and len(response['validatorAddress']) > 0 and
+                isinstance(response.get('stashAccountAddress'), str) and len(response['stashAccountAddress']) > 0
+            ):
+                service_status = 1
 
-    async def broadcast(self, signed_transaction):
-        payload = {
-            'signedTransaction': signed_transaction
-        }
-        return await self.call_method('broadcast', payload)
+        result['service_status'] = service_status
+        return result
+
+    async def unstake(self, method_config):
+        result = await self.call_method(method_config)
+        return result
+
+    async def broadcast(self, method_config):
+        result = await self.call_method(method_config)
+        return result

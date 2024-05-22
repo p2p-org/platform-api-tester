@@ -10,22 +10,21 @@ class Metrics:
         self.request_status = Gauge(
             f'{metrics_prefix}request_status',
             'Request status',
-            ['environment', 'service', 'zone', 'method', 'status'],
+            ['environment', 'service', 'zone', 'method'],
             registry=self.registry
         )
 
-        self.request_duration = Histogram(
+        self.request_latency = Gauge(
             f'{metrics_prefix}request_duration',
             'Latency in seconds',
             ['environment', 'service', 'zone', 'method'],
-            buckets=[0.1, 0.5, 1.0, 2.0, 5.0, 10.0, float('inf')],
             registry=self.registry
         )
 
         self.http_response_codes = Gauge(
             f'{metrics_prefix}http_response_codes',
             'HTTP response codes',
-            ['environment', 'service', 'zone', 'method', 'code'],
+            ['environment', 'service', 'zone', 'method', 'http_code'],
             registry=self.registry
         )
 
@@ -34,13 +33,13 @@ class Metrics:
         service = result['service']
         zone = result['zone']
         method = result['method']
-        status = 'ok' if str(result['status_code']).startswith('2') else 'fail'
+        service_status = result['service_status']
         latency = result['execution_duration']
-        http_code = str(result['status_code'])
+        http_code = result['http_response_code']
 
-        self.request_status.labels(environment=environment, service=service, zone=zone, method=method, status=status).set(1)
-        self.request_duration.labels(environment=environment, service=service, zone=zone, method=method).observe(latency)
-        self.http_response_codes.labels(environment=environment, service=service, zone=zone, method=method, code=http_code).inc()
+        self.request_status.labels(environment=environment, service=service, zone=zone, method=method).set(service_status)
+        self.request_latency.labels(environment=environment, service=service, zone=zone, method=method).set(latency)
+        self.http_response_codes.labels(environment=environment, service=service, zone=zone, method=method, http_code=http_code).inc()
 
     def get_metrics(self):
         return generate_latest(self.registry)

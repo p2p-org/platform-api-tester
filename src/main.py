@@ -13,6 +13,7 @@ from aiohttp import web
 
 load_dotenv()
 
+
 async def run_tests(config, metrics):
     logging.info('Testing started')
     results = []
@@ -37,12 +38,25 @@ async def run_tests(config, metrics):
                             continue
 
                         for method_name, method_config in zone_config.get('methods', {}).items():
-                            result = await api.call_method(method_name, method_config)
-                            result['environment'] = environment_name
-                            result['service'] = service_name
-                            result['zone'] = zone_name
-                            result['method'] = method_name
-                            results.append(result)
+
+                            if not hasattr(api, method_name):
+                                logging.warning(f'Method {method_name} not found in {service_name}. Skipping.')
+                            else:
+                                #result = await api.call_method(method_name, method_config)
+                                method = getattr(api, method_name)
+                                logging.info(f'Calling method {method_name}, {method_config}')
+                                result = await method(method_config)
+
+                                result.update({
+                                    'environment': environment_name,
+                                    'service': service_name,
+                                    'zone': zone_name,
+                                    'method': method_name
+                                })
+
+                                service_status = result['service_status']
+                                logging.info(f'Service status: {"up" if service_status == 1 else "down"}')
+                                results.append(result)
 
                         await api.close()
 
@@ -55,14 +69,16 @@ async def run_tests(config, metrics):
             await asyncio.sleep(config['test_interval'])
 
         except Exception as e:
-            logging.error(f'Error occurred during testing: {str(e)}')
+            logging.error(f'Error occurred during testing: {str(e.__repr__())}')
             await asyncio.sleep(config['test_interval'])
+
 
 def setup_logging(debug):
     if debug:
         logging.basicConfig(level=logging.DEBUG)
     else:
         logging.basicConfig(level=logging.INFO)
+
 
 async def main():
     with open('config/config.yaml', 'r') as file:
@@ -88,6 +104,7 @@ async def main():
         pass
 
     await runner.cleanup()
+
 
 if __name__ == '__main__':
     asyncio.run(main())
