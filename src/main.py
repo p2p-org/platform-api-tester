@@ -92,13 +92,9 @@ def setup_logging(debug):
 
 
 async def main():
-    with open('config/config.yaml', 'r') as file:
-        config_text = file.read()
-        print(config_text)
 
     with open('config/config.yaml', 'r') as file:
         config = yaml.safe_load(file)
-        print(config)
 
     setup_logging(config.get('debug', False))
 
