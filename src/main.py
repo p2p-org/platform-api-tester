@@ -72,7 +72,7 @@ async def run_tests(config, metrics):
                         await api.close()
 
             for result in results:
-                logging.debug(json.dumps(result, indent=2))
+                #logging.debug(json.dumps(result, indent=2))
                 metrics.update_metrics(result)
 
             results.clear()
