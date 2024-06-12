@@ -5,10 +5,12 @@ import os
 import logging
 from dotenv import load_dotenv
 from cosmos import CosmosAPI
+from ethereum import EthereumAPI
 from polkadot import PolkadotAPI
 from polygon import PolygonAPI
 from solana import SolanaAPI
 from celestia import CelestiaAPI
+from data import DataAPI
 from server import create_app
 from metrics import Metrics
 from aiohttp import web
@@ -39,6 +41,10 @@ async def run_tests(config, metrics):
                             api = CelestiaAPI(url, api_key, config['request_timeout'])
                         elif service_name == 'polygon_api':
                             api = PolygonAPI(url, api_key, config['request_timeout'])
+                        elif service_name == 'ethereum_api':
+                            api = EthereumAPI(url, api_key, config['request_timeout'])
+                        elif service_name == 'data_api':
+                            api = DataAPI(url, api_key, config['request_timeout'])
                         else:
                             logging.warning(f'Unknown service: {service_name}. Skipping.')
                             continue
@@ -48,7 +54,6 @@ async def run_tests(config, metrics):
                             if not hasattr(api, method_name):
                                 logging.warning(f'Method {method_name} not found in {service_name}. Skipping.')
                             else:
-                                #result = await api.call_method(method_name, method_config)
                                 method = getattr(api, method_name)
                                 logging.info(f'Calling method {method_name}, {method_config}')
                                 result = await method(method_config)
