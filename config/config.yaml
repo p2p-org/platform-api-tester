@@ -1,6 +1,6 @@
 debug: true
 request_timeout: 60 #seconds
-test_interval: 60 #seconds
+test_interval: 600 #seconds
 
 environments:
   #dev: https://api-test.p2p.org/api/v1
