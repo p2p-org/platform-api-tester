@@ -4,7 +4,7 @@ test_interval: 3600 #seconds
 
 environments:
   #dev: https://api-test.p2p.org/api/v1
-  prod: https://api.p2p.org/api/v1
+  prod: https://api.p2p.org/api/vv1
 
 services:
   cosmos_api:
